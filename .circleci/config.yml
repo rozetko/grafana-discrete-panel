@@ -38,7 +38,7 @@ jobs:
             VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
             ls -al
             ls -al ./artifacts
-            git config user.email "dev@corpglory.com"
+            git config user.email "rozetko@corpglory.com"
             git config user.name "CircleCI"
             git checkout -b release-${VERSION}
             git add --force dist/
