@@ -15,10 +15,6 @@ jobs:
         command: |
           npm install
           npm run build
-    - persist_to_workspace:
-        root: .
-        paths:
-        - ci
 
   release:
     docker:
