@@ -6,17 +6,19 @@ version: 2
 jobs:
   build:
     docker:
-    - image: circleci/node:10
+        - image: circleci/node:10
     working_directory: ~/grafana-discrete-panel
     steps:
-    - checkout
-    - run:
-        name: Run  Build
-        command: |
-          npm install
-          npm run build
-    - store_artifacts:
-        path: .
+        - checkout
+        - run:
+            name: Run  Build
+            command: |
+              npm install
+              npm run build
+        - persist_to_workspace:
+            root: .
+            paths:
+            - ci
 
   release:
     docker:
@@ -32,6 +34,8 @@ jobs:
 
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: "Publish Release on GitHub"
           command: |
@@ -39,7 +43,6 @@ jobs:
             apk add --update --no-cache jq
             VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
             ls -al
-            ls -al ./artifacts
             git config user.email "rozetko@corpglory.com"
             git config user.name "CircleCI"
             git checkout -b release-${VERSION}
@@ -65,4 +68,5 @@ workflows:
     jobs:
       - build
       - release:
-        requires: build
+        requires:
+          -build
