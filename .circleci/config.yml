@@ -6,6 +6,24 @@ version: 2
 jobs:
   build:
     docker:
+    - image: circleci/node:10
+    working_directory: ~/plugin
+    steps:
+    - checkout
+    - run:
+        name: Run  Build
+        command: npm run build
+    - save_cache:
+        paths:
+        - node_modules
+        key: yarn-packages-{{ checksum "yarn.lock" }}
+    - persist_to_workspace:
+        root: .
+        paths:
+        - ci
+
+  release:
+    docker:
       # specify the version you desire here
       - image: cibuilds/github:0.12
 
@@ -14,49 +32,49 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-    working_directory: ~/repo
+    working_directory: ~/plugin
 
     steps:
       - checkout
 
       # Download and cache dependencies
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+        keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
 
       - run: yarn install
 
       - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+        paths:
+          - node_modules
+        key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run:
-          name: "Publish Release on GitHub"
-          command: |
-            PLUGIN_NAME=grafana-discrete-panel
-            apk add --update --no-cache jq
-            VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
-            ls -al
-            ls -al ./artifacts
-            git config user.email "dev@corpglory.com"
-            git config user.name "CircleCI"
-            git checkout -b release-${VERSION}
-            git add --force dist/
-            git add artifacts/
-            git commit -m "automated release $VERSION [skip ci]"
-            git push -f origin release-${VERSION}
-            git tag -f v${VERSION}
-            git push -f origin v${VERSION}
-            ghr \
-              -t ${GITHUB_TOKEN} \
-              -u ${CIRCLE_PROJECT_USERNAME} \
-              -r ${CIRCLE_PROJECT_REPONAME} \
-              -c ${CIRCLE_SHA1} \
-              -n "${PLUGIN_NAME} v${VERSION}" \
-              -delete \
-              v${VERSION} \
-              ./artifacts/
+        name: "Publish Release on GitHub"
+        command: |
+          PLUGIN_NAME=grafana-discrete-panel
+          apk add --update --no-cache jq
+          VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
+          ls -al
+          ls -al ./artifacts
+          git config user.email "dev@corpglory.com"
+          git config user.name "CircleCI"
+          git checkout -b release-${VERSION}
+          git add --force dist/
+          git add artifacts/
+          git commit -m "automated release $VERSION [skip ci]"
+          git push -f origin release-${VERSION}
+          git tag -f v${VERSION}
+          git push -f origin v${VERSION}
+          ghr \
+            -t ${GITHUB_TOKEN} \
+            -u ${CIRCLE_PROJECT_USERNAME} \
+            -r ${CIRCLE_PROJECT_REPONAME} \
+            -c ${CIRCLE_SHA1} \
+            -n "${PLUGIN_NAME} v${VERSION}" \
+            -delete \
+            v${VERSION} \
+            ./artifacts/
