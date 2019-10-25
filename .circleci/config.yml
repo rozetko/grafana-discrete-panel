@@ -56,3 +56,10 @@ jobs:
             -delete \
             v${VERSION} \
             ./artifacts/
+
+workflows:
+  version: 2
+  plugin_workflow:
+    jobs:
+      - build
+      - release
