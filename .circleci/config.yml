@@ -41,7 +41,7 @@ jobs:
           command: |
             PLUGIN_NAME=grafana-discrete-panel
             apk add --update --no-cache jq
-            VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
+            VERSION=`cat dist/plugin.json|jq '.info.version'| sed s/\"//g`
             ls -al
             git config user.email "rozetko@corpglory.com"
             git config user.name "CircleCI"
