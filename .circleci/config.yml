@@ -64,6 +64,6 @@ workflows:
   version: 2
   plugin_workflow:
     jobs:
-      - build
-      - release:
-          requires: build
+    - build
+    - release:
+        requires: build
