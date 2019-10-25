@@ -31,31 +31,31 @@ jobs:
     steps:
       - checkout
       - run:
-        name: "Publish Release on GitHub"
-        command: |
-          PLUGIN_NAME=grafana-discrete-panel
-          apk add --update --no-cache jq
-          VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
-          ls -al
-          ls -al ./artifacts
-          git config user.email "dev@corpglory.com"
-          git config user.name "CircleCI"
-          git checkout -b release-${VERSION}
-          git add --force dist/
-          git add artifacts/
-          git commit -m "automated release $VERSION [skip ci]"
-          git push -f origin release-${VERSION}
-          git tag -f v${VERSION}
-          git push -f origin v${VERSION}
-          ghr \
-            -t ${GITHUB_TOKEN} \
-            -u ${CIRCLE_PROJECT_USERNAME} \
-            -r ${CIRCLE_PROJECT_REPONAME} \
-            -c ${CIRCLE_SHA1} \
-            -n "${PLUGIN_NAME} v${VERSION}" \
-            -delete \
-            v${VERSION} \
-            ./artifacts/
+          name: "Publish Release on GitHub"
+          command: |
+            PLUGIN_NAME=grafana-discrete-panel
+            apk add --update --no-cache jq
+            VERSION=`cat src/plugin.json|jq '.info.version'| sed s/\"//g`
+            ls -al
+            ls -al ./artifacts
+            git config user.email "dev@corpglory.com"
+            git config user.name "CircleCI"
+            git checkout -b release-${VERSION}
+            git add --force dist/
+            git add artifacts/
+            git commit -m "automated release $VERSION [skip ci]"
+            git push -f origin release-${VERSION}
+            git tag -f v${VERSION}
+            git push -f origin v${VERSION}
+            ghr \
+              -t ${GITHUB_TOKEN} \
+              -u ${CIRCLE_PROJECT_USERNAME} \
+              -r ${CIRCLE_PROJECT_REPONAME} \
+              -c ${CIRCLE_SHA1} \
+              -n "${PLUGIN_NAME} v${VERSION}" \
+              -delete \
+              v${VERSION} \
+              ./artifacts/
 
 workflows:
   version: 2
