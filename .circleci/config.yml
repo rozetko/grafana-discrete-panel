@@ -18,7 +18,7 @@ jobs:
         - persist_to_workspace:
             root: .
             paths:
-            - ci
+            - dist
 
   release:
     docker:
@@ -64,5 +64,5 @@ workflows:
   version: 2
   plugin_workflow:
     jobs:
-    - build
-    - release
+    - release:
+        requires: build
