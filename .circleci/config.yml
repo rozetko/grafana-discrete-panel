@@ -4,14 +4,14 @@
 #
 version: 2
 jobs:
-  build:
+  build_plugin:
     docker:
         - image: circleci/node:10
     working_directory: ~/grafana-discrete-panel
     steps:
         - checkout
         - run:
-            name: Run  Build
+            name: Run Build
             command: |
               npm install
               npm run build
@@ -64,5 +64,7 @@ workflows:
   version: 2
   plugin_workflow:
     jobs:
+    - build_plugin
     - release:
-        requires: build
+        requires: 
+          - build_plugin
