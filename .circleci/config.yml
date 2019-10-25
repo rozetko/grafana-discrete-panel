@@ -12,11 +12,9 @@ jobs:
     - checkout
     - run:
         name: Run  Build
-        command: npm run build
-    - save_cache:
-        paths:
-        - node_modules
-        key: yarn-packages-{{ checksum "yarn.lock" }}
+        command: |
+          npm install
+          npm run build
     - persist_to_workspace:
         root: .
         paths:
@@ -36,22 +34,6 @@ jobs:
 
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-        keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run: yarn install
-
-      - save_cache:
-        paths:
-          - node_modules
-        key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
       - run:
         name: "Publish Release on GitHub"
         command: |
