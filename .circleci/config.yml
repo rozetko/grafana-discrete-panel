@@ -47,7 +47,6 @@ jobs:
             git config user.name "CircleCI"
             git checkout -b release-${VERSION}
             git add --force dist/
-            git add artifacts/
             git commit -m "automated release $VERSION [skip ci]"
             git push -f origin release-${VERSION}
             git tag -f v${VERSION}
@@ -59,8 +58,7 @@ jobs:
               -c ${CIRCLE_SHA1} \
               -n "${PLUGIN_NAME} v${VERSION}" \
               -delete \
-              v${VERSION} \
-              ./artifacts/
+              v${VERSION}
 
 workflows:
   version: 2
