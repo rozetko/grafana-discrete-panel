@@ -55,7 +55,8 @@ jobs:
               -c ${CIRCLE_SHA1} \
               -n "${PLUGIN_NAME} v${VERSION}" \
               -delete \
-              v${VERSION}
+              v${VERSION} \
+              ./dist/
 
 workflows:
   version: 2
