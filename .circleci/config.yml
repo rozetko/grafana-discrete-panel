@@ -39,7 +39,11 @@ jobs:
             PLUGIN_NAME=grafana-discrete-panel
             apk add --update --no-cache jq
             VERSION=`cat dist/plugin.json|jq '.info.version'| sed s/\"//g`
-            ls -al
+            mkdir ${PLUGIN_NAME}-${VERSION}
+            mkdir artifacts
+            cp -r dist ${PLUGIN_NAME}-${VERSION}
+            zip -r artifacts/${PLUGIN_NAME}-${VERSION}.zip ${PLUGIN_NAME}-${VERSION}
+            tar -zcvf artifacts/${PLUGIN_NAME}-${VERSION}.tar.gz ${PLUGIN_NAME}-${VERSION}
             git config user.email "rozetko@corpglory.com"
             git config user.name "CircleCI"
             git checkout -b release-${VERSION}
@@ -56,7 +60,7 @@ jobs:
               -n "${PLUGIN_NAME} v${VERSION}" \
               -delete \
               v${VERSION} \
-              ./dist/
+              ./artifacts/
 
 workflows:
   version: 2
