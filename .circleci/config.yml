@@ -56,6 +56,7 @@ jobs:
               -n "${PLUGIN_NAME} v${VERSION}" \
               -delete \
               v${VERSION}
+              ./dist/
 
 workflows:
   version: 2
